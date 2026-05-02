@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% set active = "budgets" %}
+{% block title %}Budgets{% endblock %}
+{% block page_title %}Budgets{% endblock %}
+{% block content %}
+<div class="budget-header-row">
+  <p class="budget-desc">Set monthly spending limits per category and track your progress in real-time.</p>
+  <button class="btn-primary" onclick="openBudgetModal()">+ Set budget</button>
+</div>
+<div class="budget-grid" id="budgetGrid">
+  <div class="empty-state" style="grid-column:1/-1"><p>Loading…</p></div>
+</div>
+
+<div class="modal-overlay" id="budgetModal" style="display:none" onclick="closeBudgetModal(event)">
+  <div class="modal-box" style="max-width:400px">
+    <div class="modal-header"><h3>Set budget</h3><button class="modal-close" onclick="document.getElementById('budgetModal').style.display='none'">✕</button></div>
+    <form id="budgetForm" onsubmit="saveBudget(event)">
+      <div class="form-grid">
+        <div class="form-group full"><label>Category</label>
+          <select id="b-cat"><option>Transport</option><option>Food</option><option>Shopping</option><option>Utilities</option><option>Entertainment</option><option>Health</option><option>Education</option><option>Rent</option><option>Other</option></select>
+        </div>
+        <div class="form-group full"><label>Month</label>
+          <select id="b-month">
+            <option value="2024-04">April 2024</option>
+            <option value="2024-03" selected>March 2024</option>
+            <option value="2024-02">February 2024</option>
+            <option value="2024-01">January 2024</option>
+          </select>
+        </div>
+        <div class="form-group full"><label>Budget limit (₹)</label>
+          <input type="number" id="b-limit" min="1" step="100" placeholder="e.g. 5000" required>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" onclick="document.getElementById('budgetModal').style.display='none'">Cancel</button>
+        <button type="submit" class="btn-primary">Save budget</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/budgets.js') }}"></script>{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% set active = "analytics" %}
+{% block title %}Analytics{% endblock %}
+{% block page_title %}Analytics{% endblock %}
+{% block content %}
+<div class="analytics-grid">
+  <div class="chart-card full-width">
+    <div class="chart-card-header"><span class="chart-card-title">Spending by category — month over month</span></div>
+    <div class="chart-wrap" style="height:280px"><canvas id="catMonthChart"></canvas></div>
+  </div>
+  <div class="chart-card">
+    <div class="chart-card-header"><span class="chart-card-title">Daily spending pattern</span></div>
+    <div class="chart-wrap" style="height:200px"><canvas id="dailyChart"></canvas></div>
+  </div>
+  <div class="chart-card">
+    <div class="chart-card-header"><span class="chart-card-title">Transaction size distribution</span></div>
+    <div class="chart-wrap" style="height:200px"><canvas id="distChart"></canvas></div>
+  </div>
+  <div class="chart-card">
+    <div class="chart-card-header"><span class="chart-card-title">UPI app share</span></div>
+    <div class="chart-wrap" style="height:200px;position:relative"><canvas id="upiPieChart"></canvas></div>
+    <div class="legend horizontal" id="upiPieLegend"></div>
+  </div>
+  <div class="chart-card">
+    <div class="chart-card-header"><span class="chart-card-title">Weekday vs weekend spend</span></div>
+    <div class="chart-wrap" style="height:200px"><canvas id="wdChart"></canvas></div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/analytics.js') }}"></script>{% endblock %}

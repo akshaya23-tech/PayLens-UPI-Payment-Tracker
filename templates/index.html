@@ -1,0 +1,55 @@
+<!-- ═══════════════════════════════════════════ -->
+<!-- templates/index.html — Dashboard           -->
+<!-- ═══════════════════════════════════════════ -->
+{% extends "base.html" %}
+{% set active = "dashboard" %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+<section class="metrics-grid" id="metricsGrid">
+  <div class="metric-card"><div class="mc-label">Loading…</div><div class="mc-value">—</div></div>
+  <div class="metric-card"><div class="mc-label">Loading…</div><div class="mc-value">—</div></div>
+  <div class="metric-card"><div class="mc-label">Loading…</div><div class="mc-value">—</div></div>
+  <div class="metric-card"><div class="mc-label">Loading…</div><div class="mc-value">—</div></div>
+</section>
+<div class="charts-row">
+  <div class="chart-card wide">
+    <div class="chart-card-header">
+      <span class="chart-card-title">Monthly spending trend</span>
+      <div class="legend" id="trendLegend"></div>
+    </div>
+    <div class="chart-wrap" style="height:220px"><canvas id="trendChart"></canvas></div>
+  </div>
+  <div class="chart-card">
+    <div class="chart-card-header"><span class="chart-card-title">Category split</span></div>
+    <div class="chart-wrap donut-wrap">
+      <canvas id="donutChart"></canvas>
+      <div class="donut-center" id="donutCenter"></div>
+    </div>
+    <div class="legend horizontal" id="donutLegend"></div>
+  </div>
+</div>
+<div class="bottom-row">
+  <div class="panel">
+    <div class="panel-header">
+      <span class="panel-title">Recent transactions</span>
+      <a href="{{ url_for('transactions_page') }}" class="panel-link">View all →</a>
+    </div>
+    <div id="recentTxns"></div>
+  </div>
+  <div class="right-col">
+    <div class="panel">
+      <div class="panel-header"><span class="panel-title">By UPI app</span></div>
+      <div id="upiBreak"></div>
+    </div>
+    <div class="panel highlight-panel">
+      <div class="panel-header">
+        <span class="panel-title">High-value transactions</span>
+        <span class="hv-badge">above ₹10,000</span>
+      </div>
+      <div id="highValList"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>{% endblock %}

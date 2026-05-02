@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}PayLens{% endblock %} — UPI Expense Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-mark">P</span>
+      <span class="logo-text">PayLens</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="{{ url_for('dashboard') }}"      class="nav-item {% if active=='dashboard'     %}active{% endif %}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a href="{{ url_for('transactions_page') }}" class="nav-item {% if active=='transactions' %}active{% endif %}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+        <span>Transactions</span>
+      </a>
+      <a href="{{ url_for('analytics_page') }}"  class="nav-item {% if active=='analytics'    %}active{% endif %}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span>Analytics</span>
+      </a>
+      <a href="{{ url_for('merchants_page') }}"  class="nav-item {% if active=='merchants'    %}active{% endif %}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+        <span>Merchants</span>
+      </a>
+      <a href="{{ url_for('budgets_page') }}"    class="nav-item {% if active=='budgets'      %}active{% endif %}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>
+        <span>Budgets</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="btn-import" onclick="openUpload()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Import CSV
+      </button>
+      <button class="btn-add-txn" onclick="openAddModal()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Transaction
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" onclick="toggleSidebar()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="page-title-wrap">
+          <h1 class="page-title">{% block page_title %}{% endblock %}</h1>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <select class="month-picker" id="globalMonth" onchange="onMonthChange()">
+          <option value="2024-03">Loading…</option>
+        </select>
+        <div class="user-chip">
+          <div class="user-avatar">RS</div>
+          <span class="user-name">Rahul</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="page-body">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+</div>
+
+<!-- ADD TRANSACTION MODAL -->
+<div class="modal-overlay" id="addModal" style="display:none" onclick="closeAddModal(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>Add transaction</h3>
+      <button class="modal-close" onclick="document.getElementById('addModal').style.display='none'">✕</button>
+    </div>
+    <form id="addForm" onsubmit="saveTransaction(event)">
+      <div class="form-grid">
+        <div class="form-group full"><label>Merchant / Payee</label><input type="text" id="f-merchant" placeholder="e.g. BMTC, Swiggy" required></div>
+        <div class="form-group"><label>Amount (₹)</label><input type="number" id="f-amount" placeholder="0.00" step="0.01" min="1" required></div>
+        <div class="form-group"><label>Date</label><input type="date" id="f-date" required></div>
+        <div class="form-group"><label>Category</label>
+          <select id="f-cat"><option>Transport</option><option>Food</option><option>Shopping</option><option>Utilities</option><option>Entertainment</option><option>Health</option><option>Education</option><option>Rent</option><option>Other</option></select>
+        </div>
+        <div class="form-group"><label>UPI App</label>
+          <select id="f-upi"><option>PhonePe</option><option>GPay</option><option>Paytm</option><option>BHIM</option><option>Other</option></select>
+        </div>
+        <div class="form-group full"><label>Note <span class="opt">(optional)</span></label><input type="text" id="f-note" placeholder="Add a note…"></div>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" onclick="document.getElementById('addModal').style.display='none'">Cancel</button>
+        <button type="submit" class="btn-primary">Save transaction</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- CSV IMPORT MODAL -->
+<div class="modal-overlay" id="uploadModal" style="display:none" onclick="closeUploadModal(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>Import CSV</h3>
+      <button class="modal-close" onclick="document.getElementById('uploadModal').style.display='none'">✕</button>
+    </div>
+    <p class="modal-desc">Required columns: <code>Date</code>, <code>Amount</code>, <code>Merchant</code>. Optional: <code>UPI App</code>, <code>Category</code>, <code>Note</code>.</p>
+    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('csvFile').click()" ondragover="event.preventDefault()" ondrop="handleDrop(event)">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <p>Drop your CSV here or <span>browse</span></p>
+      <small>Supports PhonePe, GPay, Paytm, custom CSV</small>
+    </div>
+    <input type="file" id="csvFile" accept=".csv" style="display:none" onchange="handleCSV(event)">
+    <div id="csvPreview"></div>
+    <div class="form-actions" id="importActions" style="display:none">
+      <button type="button" class="btn-secondary" onclick="document.getElementById('uploadModal').style.display='none'">Cancel</button>
+      <button type="button" class="btn-primary" id="confirmImport" onclick="confirmImport()">Import transactions</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/api.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% set active = "merchants" %}
+{% block title %}Merchants{% endblock %}
+{% block page_title %}Merchants{% endblock %}
+{% block content %}
+<div class="filter-bar">
+  <div class="search-wrap">
+    <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="mSearch" class="search-input" placeholder="Search merchants…" oninput="renderPage()">
+  </div>
+  <select class="filter-select" id="mCatFilter" onchange="renderPage()">
+    <option value="">All categories</option>
+    <option>Transport</option><option>Food</option><option>Shopping</option><option>Utilities</option>
+    <option>Entertainment</option><option>Health</option><option>Education</option><option>Rent</option><option>Other</option>
+  </select>
+</div>
+<div class="merchant-cards" id="merchantCards">
+  <div class="empty-state" style="grid-column:1/-1"><p>Loading…</p></div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/merchants.js') }}"></script>{% endblock %}
